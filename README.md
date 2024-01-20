@@ -1,2 +1,7 @@
-# docker-volume-backup
-A simple Python script to backup docker volumes to Azure Storage 
+# Docker Volumes Backup
+
+[![Hatch project](https://img.shields.io/badge/%F0%9F%A5%9A-Hatch-4051b5.svg)](https://github.com/pypa/hatch)
+
+A simple Python script to backup docker volumes to Azure Storage.
+
+-----
