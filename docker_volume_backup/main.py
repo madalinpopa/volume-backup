@@ -39,10 +39,9 @@ AZURE_STORAGE_CONTAINER = os.getenv("AZURE_STORAGE_CONTAINER")
 
 
 class DockerManager:
-    def __init__(self, client: DockerClient):
-        self.client = client
-        self.tar_files: list[str] = []
-        self.container: Container | None = None
+    def __init__(self, docker_client: DockerClient):
+        self.client = docker_client
+        self.tar_files: list[tuple(str, str)] = []
         self.backup_storage = BACKUP_STORAGE
         self.backup_container_image = BACKUP_CONTAINER_IMAGE
 
@@ -101,7 +100,7 @@ class DockerManager:
                     result = self._run_backup_command(command, container_name)
                     if result and result.status == "created":
                         tar_path = os.path.join(backup_folder, tar_file)
-                        self.tar_files.append(tar_path)
+                        self.tar_files.append((container_name, tar_path))
                 logging.info(f"Backup for container {container_name} completed")
             else:
                 logging.info(f"Container {container_name} has no volume")
@@ -145,15 +144,25 @@ def main():
     This is the main function of the backup application.
     It is responsible for executing the backup process.
     """
-    client = DockerClient(base_url=DOCKER_HOST_URL)
+    containers = os.getenv("CONTAINERS", None)
+
+    if not containers:
+        print("No containers provided")
+        sys.exit(1)
+
+    docker_client = DockerClient(base_url=DOCKER_HOST_URL)
+
     blob_service_client = get_azure_blob_storage_client()
 
     azure_manager = AzureManager(blob_service_client=blob_service_client)
 
-    with DockerManager(client=client) as docker_manager:
-        docker_manager.backup("nginx")
+    with DockerManager(docker_client=docker_client) as docker_manager:
+        for container in containers.split(","):
+            docker_manager.backup(container_name=container)
+
         for tar in docker_manager.tar_files:
-            azure_manager.upload(tar, docker_manager.container.name)
+            container_name, tar_file = tar
+            azure_manager.upload(tar_file, container_name)
 
 
 if __name__ == "__main__":
