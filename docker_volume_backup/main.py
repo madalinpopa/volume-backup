@@ -21,7 +21,7 @@ DOCKER_HOST_URL = "unix://var/run/docker.sock"
 BACKUP_CONTAINER_IMAGE = "busybox"
 
 # The local path where to store the backup files
-BACKUP_STORAGE = "/Users/madalinpopa/backup"
+BACKUP_STORAGE = os.getenv("BACKUP_STORAGE")
 
 # ID of a Microsoft Entra application
 AZURE_CLIENT_ID = os.getenv("AZURE_CLIENT_ID")
