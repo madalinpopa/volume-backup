@@ -1,15 +1,30 @@
-# Docker Volumes Backup
+# Docker Volume Backup
 
-[![Hatch project](https://img.shields.io/badge/%F0%9F%A5%9A-Hatch-4051b5.svg)](https://github.com/pypa/hatch)
+This is just a simple python cli to backup docker volumes to Azure Storage.
 
-A simple Python script to back up docker volumes to Azure Storage.
+### Installation
 
------
+1. Clone the repository
+```bash
+git clone https://github.com/madalinpopa/volume-backup.git
+```
 
-## Usage
+2. Switch directory to repository and install.
+```bash
+pip3 install .
+```
+3. Export the following environment variables
 
-1. `git clone https://github.com/madalinpopa/docker-volume-backup.git && cd docker-volume-backup`
-2. `python3 -m venv .venv`
-3. `source .venv/bin/activate`
-4. `pip install -r requirements.txt`
-5. `python docker_volume_backup/main.py`
+```bash
+# Azure storage account name
+export AZURE_STORAGE_ACCOUNT_NAME=your-storage-account
+
+# Azure storage container
+export AZURE_STORAGE_CONTAINER=your-storage-container
+```
+
+### Usage
+
+```bash
+volume-backup --container nginx --upload
+```
